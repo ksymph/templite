@@ -1,6 +1,8 @@
-local function parse(str, environment)
-	local env = setmetatable(environment or {}, { __index = _G }) -- give templates access to global
-	env.escape = escape
+return function(str, environment, sandbox)
+	local env = setmetatable(
+		environment or {}, 
+		sandbox and nil or { __index = _G }
+	)
 	local code = [[
 		local result = ''
 		local function rwrite(s) result = result .. tostring(s or '') end
@@ -28,5 +30,3 @@ local function parse(str, environment)
 	local func = loadstring(code, "template", "t", env)
 	return func()
 end
-
-return parse
